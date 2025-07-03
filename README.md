@@ -1,35 +1,45 @@
 # SQL-Interview-Questions
 
 Q1. Second highest salary of an employee
-with t1 as(
-select emp_id,
-max(salary) as salary
-from sales
-group by emp_id
+
+WITH t1 AS (
+    SELECT emp_id,
+           MAX(salary) AS salary
+    FROM sales
+    GROUP BY emp_id
 ),
-t2 as (
-select emp_id,dense_rank() over(order by salary desc) as rnk
-from t1
+t2 AS (
+    SELECT emp_id,
+           DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+    FROM t1
 )
-select emp_id 
-from
-t2
-where rnk=2;
+SELECT emp_id
+FROM t2
+WHERE rnk = 2;
+
 
 Q2. Dept wise highest salary
-with t1 as(
-select emp_id, dept_id, rank() over(partition by dept_id order by salary desc) as rnk
-from employees
+
+WITH t1 AS (
+    SELECT 
+        emp_id,
+        dept_id,
+        RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rnk
+    FROM employees
 )
-select dept_id,emp_id 
-from t1
-where rnk=1
+SELECT dept_id, emp_id
+FROM t1
+WHERE rnk = 1;
+
 
 Q3. Display alt records
-with t1 as(
-select emp_id, salary,
-row_number() over(order by salary desc) as rn
-from employee)
-select emp_id, salary
-from t1
-where rn%2!=0
+
+WITH t1 AS (
+    SELECT emp_id, salary,
+           ROW_NUMBER() OVER (ORDER BY salary DESC) AS rn
+    FROM employee
+)
+SELECT emp_id, salary
+FROM t1
+WHERE rn % 2 != 0;
+
