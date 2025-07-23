@@ -1,0 +1,61 @@
+✨ Find the first login date of each user.
+✨ Look only at users who first logged in between 2019-04-01 and 2019-06-30.
+✨ For each date in that range, count how many users had their first login that day.
+✨ Show the counts per date in ascending order of date.
+
+Problem statement
+Table: Traffic
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| user_id       | int     |
+| activity      | enum    |
+| activity_date | date    |
++---------------+---------+
+Traffic table:
++---------+----------+---------------+
+| user_id | activity | activity_date |
++---------+----------+---------------+
+| 1       | login    | 2019-05-01    |
+| 1       | homepage | 2019-05-01    |
+| 1       | logout   | 2019-05-01    |
+| 2       | login    | 2019-06-21    |
+| 2       | logout   | 2019-06-21    |
+| 3       | login    | 2019-01-01    |
+| 3       | jobs     | 2019-01-01    |
+| 3       | logout   | 2019-01-01    |
+| 4       | login    | 2019-06-21    |
+| 4       | groups   | 2019-06-21    |
+| 4       | logout   | 2019-06-21    |
+| 5       | login    | 2019-03-01    |
+| 5       | logout   | 2019-03-01    |
+| 5       | login    | 2019-06-21    |
+| 5       | logout   | 2019-06-21    |
++---------+----------+---------------+
+
+Result table:
++------------+-------------+
+| login_date | user_count  |
++------------+-------------+
+| 2019-05-01 | 1           |
+| 2019-06-21 | 2           |
++------------+-------------+
+
+
+with t1 as(
+select user_id,
+min(activity_date) as first_login_date
+from
+traffic
+where activity='login'
+group by user_id
+)
+select first_login_date as login_date,
+count(user_id) as user_count
+from
+t1
+where 
+first_login_date between ('2019-06-30':: date - INTERVAL '90 days') and '2019-06-30':: date
+group by first_login_date
+order by first_login_date
